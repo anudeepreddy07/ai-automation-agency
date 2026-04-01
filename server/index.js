@@ -3,6 +3,7 @@ const cors = require('cors');
 const path = require('path');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
+const nodemailer = require('nodemailer');
 const { initDB, appendRow } = require('./excel_db');
 
 const app = express();
@@ -37,6 +38,15 @@ const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 // In-memory OTP store (use Redis in prod)
 const otpStore = new Map();
+
+// Initialize Email Transporter
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS
+  }
+});
 
 // Endpoints
 
@@ -130,7 +140,37 @@ app.post('/api/auth/send-otp', authLimiter, (req, res) => {
   console.log(`OTP for ${email}: \x1b[36m${otp}\x1b[0m`);
   console.log(`==============================================\n`);
   
-  res.status(200).json({ success: true, message: 'OTP generated and logged to console.' });
+  // Send actual email if configured
+  if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
+    const mailOptions = {
+      from: `"NEXUS AI Agency" <${process.env.EMAIL_USER}>`,
+      to: email,
+      subject: 'Your Login Code - NEXUS AI Agency',
+      text: `Your one-time login code is: ${otp}\n\nThis code will expire in 5 minutes.`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto; border: 1px solid #eee; padding: 20px; border-radius: 8px;">
+          <h2 style="color: #c8ff00; background: #000; padding: 10px; border-radius: 4px; text-align: center; text-transform: uppercase;">NEXUS AI Agency</h2>
+          <p>Hello,</p>
+          <p>Your one-time login password (OTP) is:</p>
+          <h1 style="font-size: 36px; letter-spacing: 5px; color: #111; text-align: center; margin: 20px 0;">${otp}</h1>
+          <p>This code will automatically expire in 5 minutes.</p>
+          <p style="color: #888; font-size: 12px; margin-top: 30px;">If you didn't request this, you can safely ignore this email.</p>
+        </div>
+      `
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.error('Email send error:', error);
+      } else {
+        console.log('OTP Email sent successfully:', info.messageId);
+      }
+    });
+  } else {
+    console.log('EMAIL_USER and EMAIL_PASS not set. Email not sent, check console for OTP.');
+  }
+
+  res.status(200).json({ success: true, message: 'OTP generated and sent.' });
 });
 
 // 5. Verify OTP route (Also rate-limited to avoid brute forcing)
