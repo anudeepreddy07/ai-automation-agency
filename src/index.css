@@ -721,6 +721,7 @@ section { padding: 120px 48px; }
   position: absolute;
   inset: 0;
   background: radial-gradient(ellipse at 50% 100%, rgba(200,255,0,0.05) 0%, transparent 65%);
+  pointer-events: none;
 }
 .cta-title {
   font-family: 'Bebas Neue', sans-serif;
@@ -746,6 +747,8 @@ section { padding: 120px 48px; }
   gap: 0;
   max-width: 480px;
   margin: 0 auto;
+  position: relative;
+  z-index: 2;
 }
 .cta-input {
   flex: 1;
