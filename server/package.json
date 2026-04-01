@@ -1,0 +1,21 @@
+{
+  "name": "ai-agency-backend",
+  "version": "1.0.0",
+  "description": "Backend for AI Automation Agency",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "exceljs": "^4.4.0",
+    "express": "^4.19.2",
+    "express-rate-limit": "^7.1.5",
+    "helmet": "^7.1.0",
+    "temp-app": "file:.."
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  }
+}

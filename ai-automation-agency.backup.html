@@ -1,0 +1,1303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEXUS — AI Automation Agency</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Serif+Display:ital@0;1&family=IBM+Plex+Mono:wght@300;400;500&family=Instrument+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --bg: #080808;
+    --surface: #0f0f0f;
+    --card: #111111;
+    --border: rgba(255,255,255,0.06);
+    --accent: #c8ff00;
+    --accent2: #00d4ff;
+    --accent3: #ff6b35;
+    --text: #f0f0ec;
+    --muted: #666;
+    --faint: #1a1a1a;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Instrument Sans', sans-serif;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* Custom cursor */
+  .cursor {
+    position: fixed;
+    width: 10px; height: 10px;
+    background: var(--accent);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: width 0.2s, height 0.2s, background 0.2s;
+    mix-blend-mode: difference;
+  }
+  .cursor-ring {
+    position: fixed;
+    width: 36px; height: 36px;
+    border: 1px solid rgba(200,255,0,0.4);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: all 0.12s ease;
+  }
+
+  /* Noise overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.4;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 900;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 48px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(8,8,8,0.85);
+    backdrop-filter: blur(20px);
+  }
+  .nav-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 26px;
+    letter-spacing: 0.12em;
+    color: var(--text);
+    text-decoration: none;
+  }
+  .nav-logo span { color: var(--accent); }
+  .nav-links {
+    display: flex;
+    gap: 36px;
+    list-style: none;
+  }
+  .nav-links a {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--text); }
+  .nav-cta {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    background: var(--accent);
+    color: #000;
+    padding: 10px 22px;
+    border: none;
+    cursor: none;
+    font-weight: 500;
+    transition: background 0.2s, transform 0.15s;
+  }
+  .nav-cta:hover { background: #d4ff20; transform: translateY(-1px); }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 0 48px 72px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Grid background */
+  .hero-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(200,255,0,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(200,255,0,0.03) 1px, transparent 1px);
+    background-size: 80px 80px;
+    animation: gridPan 30s linear infinite;
+  }
+  @keyframes gridPan {
+    from { background-position: 0 0; }
+    to { background-position: 80px 80px; }
+  }
+
+  /* Glow orb */
+  .hero-orb {
+    position: absolute;
+    top: 15%;
+    right: 10%;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(200,255,0,0.08) 0%, transparent 65%);
+    border-radius: 50%;
+    animation: pulse 4s ease-in-out infinite;
+  }
+  .hero-orb2 {
+    position: absolute;
+    bottom: 10%;
+    left: -5%;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(0,212,255,0.06) 0%, transparent 65%);
+    border-radius: 50%;
+    animation: pulse 6s ease-in-out infinite reverse;
+  }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.08); opacity: 0.7; }
+  }
+
+  .hero-badge {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    text-transform: uppercase;
+    border: 1px solid rgba(200,255,0,0.3);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    margin-bottom: 32px;
+    width: fit-content;
+  }
+  .hero-badge::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    animation: blink 1.5s ease-in-out infinite;
+  }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+  .hero-headline {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(72px, 10vw, 160px);
+    line-height: 0.9;
+    letter-spacing: -0.01em;
+    margin-bottom: 40px;
+  }
+  .hero-headline em {
+    font-style: italic;
+    font-family: 'DM Serif Display', serif;
+    color: var(--accent);
+  }
+  .hero-headline .line2 {
+    display: block;
+    color: var(--muted);
+  }
+  .hero-headline .line3 {
+    display: block;
+    -webkit-text-stroke: 1px rgba(255,255,255,0.15);
+    color: transparent;
+  }
+
+  .hero-bottom {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 40px;
+  }
+  .hero-desc {
+    max-width: 420px;
+    font-size: 15px;
+    line-height: 1.7;
+    color: #888;
+  }
+  .hero-desc strong { color: var(--text); }
+
+  .hero-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 16px;
+  }
+  .btn-primary {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    background: var(--accent);
+    color: #000;
+    padding: 16px 40px;
+    border: none;
+    cursor: none;
+    font-weight: 500;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-primary::after {
+    content: '→';
+    margin-left: 12px;
+  }
+  .btn-primary:hover { background: #d4ff20; transform: translateX(4px); }
+  .btn-ghost {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 2px;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .btn-ghost:hover { color: var(--text); border-color: var(--text); }
+
+  .hero-stats {
+    display: flex;
+    gap: 48px;
+    padding-top: 64px;
+    border-top: 1px solid var(--border);
+    margin-top: 64px;
+    position: relative;
+    z-index: 1;
+  }
+  .stat { }
+  .stat-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 48px;
+    letter-spacing: 0.05em;
+    color: var(--text);
+    line-height: 1;
+  }
+  .stat-num span { color: var(--accent); }
+  .stat-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-top: 6px;
+  }
+
+  /* Marquee */
+  .marquee-wrap {
+    background: var(--accent);
+    overflow: hidden;
+    padding: 14px 0;
+    position: relative;
+  }
+  .marquee-track {
+    display: flex;
+    gap: 0;
+    animation: marquee 25s linear infinite;
+    white-space: nowrap;
+  }
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+  .marquee-item {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    letter-spacing: 0.15em;
+    color: #000;
+    padding: 0 40px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  .marquee-dot { width: 6px; height: 6px; background: rgba(0,0,0,0.3); border-radius: 50%; }
+
+  /* SERVICES */
+  section { padding: 120px 48px; }
+
+  .section-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .section-label::before {
+    content: '';
+    width: 32px;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(48px, 6vw, 96px);
+    line-height: 0.95;
+    letter-spacing: 0.02em;
+    margin-bottom: 80px;
+  }
+  .section-title em {
+    font-family: 'DM Serif Display', serif;
+    font-style: italic;
+    color: var(--muted);
+  }
+
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+  }
+  .service-card {
+    background: var(--bg);
+    padding: 48px 40px;
+    transition: background 0.3s;
+    cursor: none;
+    position: relative;
+    overflow: hidden;
+  }
+  .service-card::before {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease;
+  }
+  .service-card:hover { background: var(--faint); }
+  .service-card:hover::before { transform: scaleX(1); }
+
+  .service-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.15em;
+    margin-bottom: 32px;
+  }
+  .service-icon {
+    font-size: 28px;
+    margin-bottom: 20px;
+  }
+  .service-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 0.08em;
+    margin-bottom: 16px;
+  }
+  .service-desc {
+    font-size: 14px;
+    line-height: 1.7;
+    color: #666;
+  }
+  .service-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 28px;
+  }
+  .tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    color: var(--muted);
+  }
+
+  /* HOW IT WORKS */
+  .process-section {
+    background: var(--faint);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .process-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+  .process-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .step {
+    display: flex;
+    gap: 32px;
+    padding: 32px 0;
+    border-bottom: 1px solid var(--border);
+    cursor: none;
+    transition: padding-left 0.3s;
+  }
+  .step:hover { padding-left: 12px; }
+  .step:last-child { border-bottom: none; }
+  .step-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 48px;
+    color: var(--border);
+    line-height: 1;
+    min-width: 60px;
+    transition: color 0.3s;
+  }
+  .step:hover .step-num { color: var(--accent); }
+  .step-content {}
+  .step-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 24px;
+    letter-spacing: 0.06em;
+    margin-bottom: 10px;
+  }
+  .step-text {
+    font-size: 14px;
+    line-height: 1.7;
+    color: #666;
+  }
+
+  /* Terminal visual */
+  .terminal {
+    background: #0a0a0a;
+    border: 1px solid rgba(200,255,0,0.15);
+    border-radius: 4px;
+    overflow: hidden;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  .terminal-bar {
+    background: #111;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+  .terminal-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+  }
+  .terminal-dot:nth-child(1) { background: #ff5f57; }
+  .terminal-dot:nth-child(2) { background: #ffbd2e; }
+  .terminal-dot:nth-child(3) { background: #27c93f; }
+  .terminal-title {
+    font-size: 11px;
+    color: var(--muted);
+    margin-left: 8px;
+    letter-spacing: 0.05em;
+  }
+  .terminal-body {
+    padding: 28px 24px;
+    font-size: 12px;
+    line-height: 2;
+  }
+  .t-line { display: block; }
+  .t-prompt { color: var(--accent); }
+  .t-cmd { color: var(--text); }
+  .t-output { color: #555; }
+  .t-success { color: #27c93f; }
+  .t-cursor {
+    display: inline-block;
+    width: 8px; height: 14px;
+    background: var(--accent);
+    vertical-align: text-bottom;
+    animation: blink 1s step-end infinite;
+  }
+
+  /* RESULTS */
+  .results-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--border);
+    margin-bottom: 80px;
+  }
+  .result-card {
+    background: var(--bg);
+    padding: 48px 32px;
+    text-align: center;
+  }
+  .result-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 64px;
+    line-height: 1;
+    letter-spacing: 0.02em;
+  }
+  .result-num.accent { color: var(--accent); }
+  .result-num.blue { color: var(--accent2); }
+  .result-num.orange { color: var(--accent3); }
+  .result-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-top: 12px;
+  }
+
+  /* TESTIMONIALS */
+  .testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+  .testimonial-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 36px;
+    position: relative;
+  }
+  .testimonial-card::before {
+    content: '"';
+    position: absolute;
+    top: 20px; right: 28px;
+    font-family: 'DM Serif Display', serif;
+    font-size: 80px;
+    color: rgba(200,255,0,0.1);
+    line-height: 1;
+  }
+  .testimonial-text {
+    font-size: 14px;
+    line-height: 1.8;
+    color: #aaa;
+    margin-bottom: 28px;
+    font-style: italic;
+    font-family: 'DM Serif Display', serif;
+  }
+  .testimonial-author {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .author-avatar {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 16px;
+    background: var(--faint);
+    border: 1px solid var(--border);
+  }
+  .author-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .author-role {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    margin-top: 2px;
+  }
+
+  /* PRICING */
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+  .pricing-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 40px 36px;
+    position: relative;
+    transition: border-color 0.3s, transform 0.3s;
+    cursor: none;
+  }
+  .pricing-card:hover { border-color: rgba(200,255,0,0.3); transform: translateY(-4px); }
+  .pricing-card.featured {
+    border-color: var(--accent);
+    background: #0d0d0a;
+  }
+  .pricing-badge {
+    position: absolute;
+    top: -1px; right: 28px;
+    background: var(--accent);
+    color: #000;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    font-weight: 500;
+  }
+  .pricing-plan {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .pricing-price {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 64px;
+    line-height: 1;
+    letter-spacing: 0.02em;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  .pricing-price sup {
+    font-size: 24px;
+    vertical-align: super;
+    letter-spacing: 0;
+  }
+  .pricing-period {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    margin-bottom: 32px;
+  }
+  .pricing-divider {
+    height: 1px;
+    background: var(--border);
+    margin-bottom: 32px;
+  }
+  .pricing-features {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-bottom: 40px;
+  }
+  .pricing-features li {
+    font-size: 13px;
+    color: #888;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .pricing-features li::before {
+    content: '✓';
+    color: var(--accent);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    min-width: 16px;
+  }
+  .pricing-features li.muted::before { color: var(--muted); content: '—'; }
+  .pricing-features li.muted { opacity: 0.4; }
+  .pricing-btn {
+    display: block;
+    text-align: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 14px;
+    text-decoration: none;
+    transition: all 0.2s;
+    border: 1px solid var(--border);
+    color: var(--text);
+  }
+  .pricing-btn:hover { background: var(--faint); }
+  .pricing-card.featured .pricing-btn {
+    background: var(--accent);
+    color: #000;
+    border-color: var(--accent);
+    font-weight: 500;
+  }
+  .pricing-card.featured .pricing-btn:hover { background: #d4ff20; }
+
+  /* CTA */
+  .cta-section {
+    background: var(--faint);
+    border-top: 1px solid var(--border);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .cta-bg {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 100%, rgba(200,255,0,0.05) 0%, transparent 65%);
+  }
+  .cta-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(56px, 7vw, 112px);
+    line-height: 0.9;
+    letter-spacing: 0.02em;
+    margin-bottom: 32px;
+  }
+  .cta-title em {
+    font-family: 'DM Serif Display', serif;
+    font-style: italic;
+    color: var(--accent);
+  }
+  .cta-sub {
+    font-size: 15px;
+    color: var(--muted);
+    max-width: 400px;
+    margin: 0 auto 48px;
+    line-height: 1.7;
+  }
+  .cta-form {
+    display: flex;
+    gap: 0;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+  .cta-input {
+    flex: 1;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-right: none;
+    padding: 16px 20px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--text);
+    outline: none;
+    letter-spacing: 0.05em;
+  }
+  .cta-input::placeholder { color: var(--muted); }
+  .cta-input:focus { border-color: var(--accent); }
+  .cta-submit {
+    background: var(--accent);
+    border: none;
+    padding: 16px 32px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 500;
+    cursor: none;
+    transition: background 0.2s;
+  }
+  .cta-submit:hover { background: #d4ff20; }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .footer-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 0.12em;
+    color: var(--text);
+  }
+  .footer-logo span { color: var(--accent); }
+  .footer-links {
+    display: flex;
+    gap: 32px;
+    list-style: none;
+  }
+  .footer-links a {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  .footer-links a:hover { color: var(--text); }
+  .footer-copy {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+  }
+
+  /* Animations */
+  .fade-up {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .fade-up.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  @media (max-width: 900px) {
+    nav { padding: 16px 24px; }
+    .nav-links { display: none; }
+    .hero, section { padding-left: 24px; padding-right: 24px; }
+    .hero-bottom { flex-direction: column; align-items: flex-start; }
+    .hero-actions { align-items: flex-start; }
+    .hero-stats { flex-wrap: wrap; gap: 32px; }
+    .services-grid, .pricing-grid, .testimonials-grid { grid-template-columns: 1fr; }
+    .process-grid { grid-template-columns: 1fr; }
+    .results-grid { grid-template-columns: repeat(2, 1fr); }
+    footer { flex-direction: column; gap: 24px; text-align: center; }
+    .footer-links { flex-wrap: wrap; justify-content: center; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">NEX<span>US</span></a>
+  <ul class="nav-links">
+    <li><a href="#services">Services</a></li>
+    <li><a href="#process">Process</a></li>
+    <li><a href="#results">Results</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+  </ul>
+  <button class="nav-cta">Get Audit</button>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-orb"></div>
+  <div class="hero-orb2"></div>
+
+  <div class="hero-badge">AI Automation Agency · Est. 2024</div>
+
+  <h1 class="hero-headline">
+    We Build<br>
+    <em>Intelligent</em><br>
+    <span class="line2">Machines</span><br>
+    <span class="line3">For Your Business</span>
+  </h1>
+
+  <div class="hero-bottom">
+    <p class="hero-desc">
+      <strong>NEXUS automates what slows you down.</strong> From AI agents to full workflow automation — we replace repetitive work with systems that run 24/7, learn, and scale.
+    </p>
+    <div class="hero-actions">
+      <a href="#pricing" class="btn-primary">Start Automating</a>
+      <a href="#process" class="btn-ghost">See How It Works</a>
+    </div>
+  </div>
+
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">340<span>+</span></div>
+      <div class="stat-label">Workflows Deployed</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">12<span>M</span></div>
+      <div class="stat-label">Hours Saved</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">98<span>%</span></div>
+      <div class="stat-label">Client Retention</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">4.2<span>x</span></div>
+      <div class="stat-label">Avg ROI</div>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-wrap">
+  <div class="marquee-track">
+    <span class="marquee-item">AI Agents <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Workflow Automation <span class="marquee-dot"></span></span>
+    <span class="marquee-item">LLM Integration <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Data Pipelines <span class="marquee-dot"></span></span>
+    <span class="marquee-item">CRM Automation <span class="marquee-dot"></span></span>
+    <span class="marquee-item">AI Chatbots <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Process Mining <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Voice AI <span class="marquee-dot"></span></span>
+    <span class="marquee-item">AI Agents <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Workflow Automation <span class="marquee-dot"></span></span>
+    <span class="marquee-item">LLM Integration <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Data Pipelines <span class="marquee-dot"></span></span>
+    <span class="marquee-item">CRM Automation <span class="marquee-dot"></span></span>
+    <span class="marquee-item">AI Chatbots <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Process Mining <span class="marquee-dot"></span></span>
+    <span class="marquee-item">Voice AI <span class="marquee-dot"></span></span>
+  </div>
+</div>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="section-label">What We Do</div>
+  <h2 class="section-title">Our <em>Core</em><br>Services</h2>
+  <div class="services-grid">
+    <div class="service-card fade-up">
+      <div class="service-num">01 / 06</div>
+      <div class="service-icon">🤖</div>
+      <div class="service-name">AI Agents</div>
+      <p class="service-desc">Autonomous agents that reason, plan, and execute complex multi-step tasks across your tools — with zero manual intervention.</p>
+      <div class="service-tags">
+        <span class="tag">LangChain</span>
+        <span class="tag">OpenAI</span>
+        <span class="tag">Claude</span>
+        <span class="tag">AutoGPT</span>
+      </div>
+    </div>
+    <div class="service-card fade-up">
+      <div class="service-num">02 / 06</div>
+      <div class="service-icon">⚡</div>
+      <div class="service-name">Workflow Automation</div>
+      <p class="service-desc">End-to-end automation of business processes — from lead capture to invoicing. We map, design, and deploy your ops on autopilot.</p>
+      <div class="service-tags">
+        <span class="tag">Make</span>
+        <span class="tag">n8n</span>
+        <span class="tag">Zapier</span>
+        <span class="tag">Custom</span>
+      </div>
+    </div>
+    <div class="service-card fade-up">
+      <div class="service-num">03 / 06</div>
+      <div class="service-icon">💬</div>
+      <div class="service-name">AI Chatbots</div>
+      <p class="service-desc">Custom LLM-powered chatbots trained on your data. Support 10x more customers, 24/7, with human-level accuracy.</p>
+      <div class="service-tags">
+        <span class="tag">RAG</span>
+        <span class="tag">Fine-tuning</span>
+        <span class="tag">Multi-channel</span>
+      </div>
+    </div>
+    <div class="service-card fade-up">
+      <div class="service-num">04 / 06</div>
+      <div class="service-icon">📊</div>
+      <div class="service-name">Data Pipelines</div>
+      <p class="service-desc">Transform raw data into intelligence. Automated ETL, real-time dashboards, and AI-powered reporting that runs itself.</p>
+      <div class="service-tags">
+        <span class="tag">dbt</span>
+        <span class="tag">Airflow</span>
+        <span class="tag">BigQuery</span>
+      </div>
+    </div>
+    <div class="service-card fade-up">
+      <div class="service-num">05 / 06</div>
+      <div class="service-icon">📞</div>
+      <div class="service-name">Voice AI</div>
+      <p class="service-desc">Deploy AI voice agents for inbound calls, outbound campaigns, and customer interviews — indistinguishable from human reps.</p>
+      <div class="service-tags">
+        <span class="tag">ElevenLabs</span>
+        <span class="tag">Twilio</span>
+        <span class="tag">Vapi</span>
+      </div>
+    </div>
+    <div class="service-card fade-up">
+      <div class="service-num">06 / 06</div>
+      <div class="service-icon">🔗</div>
+      <div class="service-name">CRM Automation</div>
+      <p class="service-desc">AI that updates your CRM, scores leads, sends follow-ups, and books meetings — so your sales team only closes deals.</p>
+      <div class="service-tags">
+        <span class="tag">HubSpot</span>
+        <span class="tag">Salesforce</span>
+        <span class="tag">Pipedrive</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section id="process" class="process-section">
+  <div class="section-label">How It Works</div>
+  <h2 class="section-title">From<br><em>Audit</em> to<br>Autopilot</h2>
+  <div class="process-grid">
+    <div class="process-steps">
+      <div class="step fade-up">
+        <div class="step-num">01</div>
+        <div class="step-content">
+          <div class="step-title">Discovery Audit</div>
+          <p class="step-text">We analyze your ops, identify high-ROI automation targets, and map your existing tools and workflows.</p>
+        </div>
+      </div>
+      <div class="step fade-up">
+        <div class="step-num">02</div>
+        <div class="step-content">
+          <div class="step-title">System Design</div>
+          <p class="step-text">Our engineers blueprint the AI architecture — agents, triggers, data flows, integrations — tailored to your stack.</p>
+        </div>
+      </div>
+      <div class="step fade-up">
+        <div class="step-num">03</div>
+        <div class="step-content">
+          <div class="step-title">Build & Test</div>
+          <p class="step-text">We build in sprints with real feedback loops. Every automation is stress-tested before it touches your live environment.</p>
+        </div>
+      </div>
+      <div class="step fade-up">
+        <div class="step-num">04</div>
+        <div class="step-content">
+          <div class="step-title">Deploy & Optimize</div>
+          <p class="step-text">Launch with confidence. We monitor, iterate, and continuously improve — your automations get smarter over time.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="terminal fade-up">
+      <div class="terminal-bar">
+        <div class="terminal-dot"></div>
+        <div class="terminal-dot"></div>
+        <div class="terminal-dot"></div>
+        <span class="terminal-title">nexus-agent · audit-pipeline</span>
+      </div>
+      <div class="terminal-body">
+        <span class="t-line"><span class="t-prompt">nexus@agent:~$</span> <span class="t-cmd">run audit --client=acme-corp</span></span>
+        <span class="t-line t-output">→ Scanning 47 workflows...</span>
+        <span class="t-line t-output">→ Analyzing CRM data patterns...</span>
+        <span class="t-line t-output">→ Identifying bottlenecks...</span>
+        <span class="t-line"> </span>
+        <span class="t-line t-success">✓ 12 automation targets found</span>
+        <span class="t-line t-success">✓ Est. 840 hrs/month savings</span>
+        <span class="t-line t-success">✓ ROI projection: 6.2x</span>
+        <span class="t-line"> </span>
+        <span class="t-line"><span class="t-prompt">nexus@agent:~$</span> <span class="t-cmd">deploy --priority=high</span></span>
+        <span class="t-line t-output">→ Spinning up AI agents...</span>
+        <span class="t-line t-output">→ Connecting integrations...</span>
+        <span class="t-line t-success">✓ Pipeline live · 3 agents running</span>
+        <span class="t-line"> </span>
+        <span class="t-line"><span class="t-prompt">nexus@agent:~$</span> <span class="t-cursor"></span></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RESULTS -->
+<section id="results">
+  <div class="section-label">Proven Impact</div>
+  <h2 class="section-title">The <em>Numbers</em><br>Don't Lie</h2>
+  <div class="results-grid fade-up">
+    <div class="result-card">
+      <div class="result-num accent">87%</div>
+      <div class="result-label">Avg Time Reduction in Ops</div>
+    </div>
+    <div class="result-card">
+      <div class="result-num blue">12M+</div>
+      <div class="result-label">Hours Automated to Date</div>
+    </div>
+    <div class="result-card">
+      <div class="result-num orange">4.2x</div>
+      <div class="result-label">Average Client ROI</div>
+    </div>
+    <div class="result-card">
+      <div class="result-num" style="color:var(--text)">340+</div>
+      <div class="result-label">Active Automations</div>
+    </div>
+  </div>
+
+  <!-- TESTIMONIALS -->
+  <div class="testimonials-grid">
+    <div class="testimonial-card fade-up">
+      <p class="testimonial-text">NEXUS replaced 3 full-time ops roles with a single AI agent. Our processing time dropped from 4 days to 20 minutes.</p>
+      <div class="testimonial-author">
+        <div class="author-avatar">RK</div>
+        <div>
+          <div class="author-name">Rohan Kapoor</div>
+          <div class="author-role">COO · Fintech Startup</div>
+        </div>
+      </div>
+    </div>
+    <div class="testimonial-card fade-up">
+      <p class="testimonial-text">The voice AI they built handles 600 inbound calls a day. Our human team now focuses only on enterprise clients. Game changer.</p>
+      <div class="testimonial-author">
+        <div class="author-avatar">SL</div>
+        <div>
+          <div class="author-name">Sarah Liu</div>
+          <div class="author-role">Head of CX · SaaS Co.</div>
+        </div>
+      </div>
+    </div>
+    <div class="testimonial-card fade-up">
+      <p class="testimonial-text">Within 6 weeks we had a fully autonomous outbound machine. 3x more pipeline, same headcount. The ROI is genuinely insane.</p>
+      <div class="testimonial-author">
+        <div class="author-avatar">AV</div>
+        <div>
+          <div class="author-name">Arjun Verma</div>
+          <div class="author-role">Founder · D2C Brand</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing" style="background:var(--faint); border-top:1px solid var(--border);">
+  <div class="section-label">Pricing</div>
+  <h2 class="section-title">Simple,<br><em>Transparent</em><br>Plans</h2>
+  <div class="pricing-grid">
+    <div class="pricing-card fade-up">
+      <div class="pricing-plan">Starter</div>
+      <div class="pricing-price"><sup>$</sup>2,500</div>
+      <div class="pricing-period">/ month</div>
+      <div class="pricing-divider"></div>
+      <ul class="pricing-features">
+        <li>2 Automation Workflows</li>
+        <li>1 AI Chatbot</li>
+        <li>Basic Integrations (3)</li>
+        <li>Monthly Reporting</li>
+        <li>Email Support</li>
+        <li class="muted">AI Agents</li>
+        <li class="muted">Voice AI</li>
+        <li class="muted">Dedicated Engineer</li>
+      </ul>
+      <a href="#contact" class="pricing-btn">Get Started</a>
+    </div>
+
+    <div class="pricing-card featured fade-up">
+      <div class="pricing-badge">Most Popular</div>
+      <div class="pricing-plan">Growth</div>
+      <div class="pricing-price"><sup>$</sup>6,500</div>
+      <div class="pricing-period">/ month</div>
+      <div class="pricing-divider"></div>
+      <ul class="pricing-features">
+        <li>10 Automation Workflows</li>
+        <li>3 AI Agents</li>
+        <li>Advanced Integrations (10)</li>
+        <li>AI Chatbot (trained)</li>
+        <li>Weekly Reporting + Dashboard</li>
+        <li>Slack Support</li>
+        <li>Voice AI (1 campaign)</li>
+        <li class="muted">Dedicated Engineer</li>
+      </ul>
+      <a href="#contact" class="pricing-btn">Get Started</a>
+    </div>
+
+    <div class="pricing-card fade-up">
+      <div class="pricing-plan">Enterprise</div>
+      <div class="pricing-price">Custom</div>
+      <div class="pricing-period">tailored to scale</div>
+      <div class="pricing-divider"></div>
+      <ul class="pricing-features">
+        <li>Unlimited Workflows</li>
+        <li>Full AI Agent Suite</li>
+        <li>Unlimited Integrations</li>
+        <li>Voice AI (multi-campaign)</li>
+        <li>Real-time Dashboard</li>
+        <li>Dedicated Engineer</li>
+        <li>Weekly Strategy Calls</li>
+        <li>Priority SLA + Uptime</li>
+      </ul>
+      <a href="#contact" class="pricing-btn">Book a Call</a>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section id="contact" class="cta-section">
+  <div class="cta-bg"></div>
+  <div class="section-label" style="justify-content:center">Free Audit</div>
+  <h2 class="cta-title">Ready to<br><em>Automate?</em></h2>
+  <p class="cta-sub">Get a free 30-min audit. We'll identify your top 3 automation opportunities and estimate your potential ROI — no strings attached.</p>
+  <div class="cta-form">
+    <input type="email" class="cta-input" placeholder="your@company.com">
+    <button class="cta-submit">Get Free Audit →</button>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">NEX<span>US</span></div>
+  <ul class="footer-links">
+    <li><a href="#">Services</a></li>
+    <li><a href="#">Case Studies</a></li>
+    <li><a href="#">Process</a></li>
+    <li><a href="#">Pricing</a></li>
+    <li><a href="#">Contact</a></li>
+  </ul>
+  <div class="footer-copy">© 2025 NEXUS · All rights reserved</div>
+</footer>
+
+<script>
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cursor.style.left = mx + 'px';
+    cursor.style.top = my + 'px';
+  });
+
+  function animRing() {
+    rx += (mx - rx) * 0.12;
+    ry += (my - ry) * 0.12;
+    ring.style.left = rx + 'px';
+    ring.style.top = ry + 'px';
+    requestAnimationFrame(animRing);
+  }
+  animRing();
+
+  // Hover states
+  document.querySelectorAll('a, button, .service-card, .step, .pricing-card').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      cursor.style.width = '18px';
+      cursor.style.height = '18px';
+      ring.style.width = '52px';
+      ring.style.height = '52px';
+    });
+    el.addEventListener('mouseleave', () => {
+      cursor.style.width = '10px';
+      cursor.style.height = '10px';
+      ring.style.width = '36px';
+      ring.style.height = '36px';
+    });
+  });
+
+  // Scroll reveal
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 80);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+  // Counter animation
+  function animateCount(el, target, suffix='') {
+    let start = 0;
+    const duration = 2000;
+    const step = timestamp => {
+      if (!start) start = timestamp;
+      const progress = Math.min((timestamp - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      el.textContent = Math.floor(eased * target) + suffix;
+      if (progress < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }
+
+  // Stat observer
+  const statsObs = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const nums = entry.target.querySelectorAll('.stat-num');
+        nums.forEach(n => {
+          const text = n.textContent;
+          const match = text.match(/[\d.]+/);
+          if (match) {
+            const num = parseFloat(match[0]);
+            const suffix = text.replace(match[0], '');
+            n.innerHTML = num + suffix;
+          }
+        });
+        statsObs.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.5 });
+
+  document.querySelector('.hero-stats') && statsObs.observe(document.querySelector('.hero-stats'));
+</script>
+</body>
+</html>
